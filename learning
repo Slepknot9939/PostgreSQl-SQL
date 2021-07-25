@@ -1,0 +1,357 @@
+select * from customer;
+
+select * from product;
+
+select * from sales;
+
+select * from sales where ship_date between '2014-11-11' and '2016-11-11';
+
+select * from customer where customer_name like '__ %';
+
+---ect * from customer where city in();
+
+select * from customer where state='California' order by customer_name;
+
+select * from customer order by city asc,customer_name desc;
+
+select * from customer where region='East' order by city;
+
+select * from customer order by region='East'asc,region='South';
+
+select * from customer order by 2 asc;
+
+select * from customer order by age<50;
+
+select * from customer where age>60order by age desc limit 10;
+
+select * from customer where age<=100 and age>=70 order by region desc limit 5;
+
+select * from sales where discount>0 order by discount desc;
+
+select * from sales where discount>0 order by discount desc limit 10;
+
+select customer_id as "serial Number" ,customer_name as "name",age as age from customer;
+
+select count (*)from sales;
+
+select count(order_line) as "Number of orders ordered" ,count(distinct order_id) as "ordered by customer" 
+from sales where customer_id='CG-12520';
+
+select count(distinct order_id) as "number of ordered",count (distinct product_id) as "product ordered"
+from sales where customer_id='DV-13045';
+
+select count (distinct order_id) as "number of orders ordered", count (distinct product_id) as " customer ordered
+product" from sales where customer_id='BH-11710';
+
+select count(distinct order_id) as "order id",count(distinct order_date) as "when ordered the product",
+count(distinct ship_date) as "ordered shipped" from sales where customer_id='SO-20335';
+
+select sum(profit) as "total profit" from sales;
+
+select sum(quantity) as "Total Quality" from sales where product_id='FUR-BO-10001798';
+
+select sum(sales) as "Total number of sales" from sales where customer_id='CG-12520';
+
+select sum(discount) as "total discount given" from sales;
+
+select avg(profit) as "Average total profit made by company" from sales;
+
+select avg(sales) as "Company total sales" from sales;
+
+select avg (discount) OR avg (distinct discount) as "company given discount" from sales;
+
+select min(profit) as "Companys Minimum profit" from sales;
+
+select max(profit) as "Maximum porfit" from sales;
+
+select min(sales) from sales;
+
+select max(sales) from sales;
+
+select min(discount) from sales;
+
+select max(discount) from sales;
+
+select min(sales) from sales where order_date between '2016-04-11' and '2016-11-11';
+
+select max(sales) from sales where order_date between '2016-04-11' and '2016-11-11';
+
+select min(age) from customer;
+
+select max(age) from customer;
+
+select max(discount) from sales where ship_mode in('Standard Class');
+
+select sales from sales 
+where order_date between '2014-04-01' and '2016-06-01' order by sales asc;
+
+select profit from sales 
+where order_date between '2015-04-01' and '2015-11-11' order by profit asc;
+
+select discount from sales 
+where ship_date between '2016-11-01' and '2016-11-30' order by discount desc;
+
+select sum(sales) from sales;
+
+select count(distinct region) as "total number" 
+from customer where age<=30 and age>=20;
+
+select avg(age) from customer where region='North';
+
+select min (distinct age) from customer where city in('Philadelphia');
+
+select max(distinct age) from customer where city in('Philadelphia');
+
+select region,count(customer_id) as customer_count from customer group by region;
+
+select city ,count(state) as customer_state from customer group by city;
+
+
+select product_id,sum(quantity) as "totalquantity" from sales 
+group by product_id order by totalquantity desc;
+
+select * from sales;
+
+select customer_id,sum(profit) as "profit_earned" from sales group by customer_id order by 
+profit_earned desc;
+
+select customer_id,sum(sales) as "sale_earned"  from sales group by customer_id order by 
+sale_earned desc;
+
+select customer_id,
+min(sales) as "minimum_sales",
+max(sales) as "max_sales",
+avg(sales) as "avaerage_sales",
+sum(sales) as "total_sales"
+from sales group by customer_id
+order by total_sales desc
+limit 5;
+
+select product_id,
+order_id,
+min(sales) as "min_sales",max(sales) as "max_sales",avg(sales) as "avg_sales",
+min(quantity) as "min_quantit",max(quantity) as "max_quantity",avg(quantity) as "quantity_avg",
+min(profit) as "min_profit",max(profit) as "max_profit",avg(profit) as "avg_profit",sum(profit) as total
+from sales group by product_id,order_id order by total desc 
+limit 10;
+
+select * from customer;
+
+--having
+
+select region ,count(customer_id) as customer_count from customer
+group by region 
+having count(customer_id)>200;
+
+--excerise
+select * from sales;
+select product_id,count(sales) as "total_sales" from sales 
+group by product_id order by total_sales desc;
+
+select product_id,count(sales) as "total_sales",count(quantity) as "total_quantity"
+from sales group by product_id order by total_sales  desc;
+
+select * from customer;
+
+select product_id,count(order_id) as "total_order" from sales  
+group by product_id order by total_order desc;
+
+select product_id,
+min(sales) as "min_sales",
+max(sales) as "max_sales",
+avg(sales) as "avg_sales" from sales
+group by product_id;
+
+select product_id,count(quantity) as "total_quantity" from sales 
+group by product_id having count (quantity)>10;
+
+select *,
+case when age<30 then'Young'
+when age>60 then 'Senior citizen'
+else 'middle age'
+end as age_category
+from customer;
+
+--creating new dataset for join operatio
+create table sales_2015 as select * from  sales where ship_date between '2015-01-01' and '2015-12-31'
+select count(*)from sales_2015;
+select count(distinct customer_id) from sales_2015;
+
+create table customer_20_60 as select * from customer where age between 20 and 60;
+select count (*) from customer_20_60;
+
+select * from sales_2015;
+
+select * from customer_20_60;
+
+--Inner_Joints
+--JOints
+select 
+a.order_line,
+a.product_id,
+a.customer_id,
+a.sales,
+b.customer_name,
+b.age
+from sales_2015 as a inner join customer_20_60 as b
+on a.customer_id=b.customer_id
+order by customer_id;
+
+--Left_Joint
+select
+a.order_line,a.product_id,a.sales,a.customer_id,
+b.customer_name,b.age
+from sales_2015 as a
+left join customer_20_60 as b
+on a.customer_id=b.customer_id
+order by customer_id;
+
+--right_joint
+select
+a.product_id,a.sales,a.order_line,a.customer_id,
+b.customer_name,b.age
+from sales_2015 as a
+right join customer_20_60 as b
+on
+a.customer_id=b.customer_id
+order by customer_id;
+
+--full_join
+select
+a.customer_id,a.product_id,a.sales,a.order_line,
+b.customer_name,b.age,b.customer_id
+from sales_2015 as a
+full join customer_20_60 as b
+on
+a.customer_id=b.customer_id
+order by a.customer_id,b.customer_id;
+
+--cross join
+create table month_value (MM integer);
+create table year_value(YYYY integer); 
+
+insert into month_value values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12);
+insert into year_value values (2011),(2012),(2013),(2014),(2015),(2016),(2017),(2018),(2019);
+
+select * from month_value;
+
+select * from year_value;
+
+select a.YYYY,b.MM
+from year_value as a , month_value as b
+order by a.YYYY ,b.MM;
+
+create table day_value (DD integer);
+insert into day_value values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),
+							 (16),(17),(18),(19),(20),(21),(22),(23),(24),(25),(26),(27),(28),(29),
+							 (30);
+
+select a.YYYY,b.MM,c.DD
+from day_value as c,month_value as b,year_value as a
+order by a.YYYY,b.MM,c.DD;
+
+-----intersect ,expect & Union
+select customer_id from sales_2015
+intersect 
+select customer_id from customer_20_60;
+
+-----except
+select customer_id from sales_2015
+except
+select customer_id from customer_20_60
+order by customer_id;
+
+------union
+select customer_id from sales_2015
+union
+select customer_id from customer_20_60
+order by customer_id;
+
+--Excerises
+select * from customer_20_60;
+select * from sales_2015;
+
+select 
+a.customer_id,a.customer_name,a.state,
+b.sales,b.product_id
+from customer_20_60 as a
+inner join sales_2015 as b
+on a.customer_id=b.customer_id
+order by customer_id;
+
+
+---Quires
+--Using IN funtion
+select * from sales where customer_id in 
+(select customer_id from customer where age>60);
+
+--using From funtion
+select 
+a.product_id,a.product_name,a.category,
+b.quantity
+from product as a
+left join(select product_id ,sum(quantity) as quantity from sales group by product_id) as b
+on a.product_id=b.product_id
+order by b.quantity desc;
+
+---sunquires within the subquries
+select customer_id,order_line,(select customer_name from customer
+							  where customer.customer_id=sales.customer_id)
+from sales
+order by customer_id;
+
+--Exercise
+select * from sales;
+select * from customer;
+select * from product; 
+
+
+select 
+a.order_id,a.order_date,a.ship_date,a.ship_mode,a.customer_id,a.product_id,a.sales,a.quantity,a.profit,
+b.customer_name,b.age
+from sales as a
+left join customer as b
+on a.customer_id=b.customer_id
+right join(select product_id,product_name ,category as category from product group by product_id )as c
+on a.product_id=c.product_id
+order by product_id;
+
+---Views
+--it use less memory and u can control the acess using this and its a query not a table
+--usinf View or Replace
+--drop view
+--update view but dont do it but if you want to update than use upadte on main table not in view.
+create view logistic as 
+select a.order_line,a.order_id,
+b.customer_name,b.city,b.state,b.country
+from sales as a
+left join customer as b
+on a.customer_id=b.customer_id
+order by a.order_line;
+
+select * from logistic;
+
+----Index-
+--it is advise that not use index beacuse it slowdown the proces of update
+--it is adviseable than when its very very important than only use it
+--in INdex using one column called simple index and using muplitple columns called composite index
+
+create index mon_idx
+on month_value(MM);
+
+select * from month_value;
+
+---Exercise
+select * from customer;
+select * from sales;
+select * from prodcut;
+
+create view daily_billing as
+select 
+order_line,product_id,sales,discount
+from sales 
+where order_date in (select max(order_date)from sales);
+
+select * from daily_billing;
+
+-----------------------
